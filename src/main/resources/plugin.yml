@@ -1,0 +1,4 @@
+name: PetsAPI
+version: '1.0.0'
+main: dev.lrxh.petsAPI.PetsAPI
+api-version: '1.21'
