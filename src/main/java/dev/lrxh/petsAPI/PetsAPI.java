@@ -17,7 +17,7 @@ import java.util.UUID;
 public final class PetsAPI {
     public static JavaPlugin instance;
     private static HashMap<UUID, List<Pet>> pets;
-    private static HashMap<UUID, MoveRunnable> runnables;
+    private static HashMap<UUID, List<MoveRunnable>> runnables;
 
     public static void init(JavaPlugin plugin) {
         PacketEvents.getAPI().init();
@@ -30,8 +30,10 @@ public final class PetsAPI {
         runnables = new HashMap<>();
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            for (MoveRunnable moveRunnable : runnables.values()) {
-                Bukkit.getScheduler().runTask(plugin, moveRunnable);
+            for (List<MoveRunnable> runnable : runnables.values()) {
+                for (MoveRunnable moveRunnable : runnable) {
+                    Bukkit.getScheduler().runTask(plugin, moveRunnable);
+                }
             }
         }, 0L, 2L);
     }
@@ -41,15 +43,21 @@ public final class PetsAPI {
             List<Pet> pets = new ArrayList<>();
             pets.add(pet);
             PetsAPI.pets.put(player.getUniqueId(), pets);
+        } else {
+            pets.get(player.getUniqueId()).add(pet);
         }
 
-        pets.get(player.getUniqueId()).add(pet);
+        if (!runnables.containsKey(player.getUniqueId())) {
+            List<MoveRunnable> runnables = new ArrayList<>();
+            runnables.add(new MoveRunnable(player, pet));
+            PetsAPI.runnables.put(player.getUniqueId(), runnables);
+        } else {
+            runnables.get(player.getUniqueId()).add(new MoveRunnable(player, pet));
+        }
 
         for (Player online : Bukkit.getOnlinePlayers()) {
             load(online);
         }
-
-        runnables.put(player.getUniqueId(), new MoveRunnable(player, pet));
     }
 
     static void load(Player player) {
