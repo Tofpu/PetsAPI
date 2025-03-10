@@ -18,6 +18,7 @@ public final class PetsAPI {
     public static JavaPlugin instance;
     private static HashMap<UUID, List<Pet>> pets;
     private static HashMap<UUID, List<MoveRunnable>> runnables;
+    protected static HashMap<String, SkinData> skinDatas;
 
     public static void init(JavaPlugin plugin) {
         PacketEvents.getAPI().init();
@@ -28,6 +29,7 @@ public final class PetsAPI {
         instance = plugin;
         pets = new HashMap<>();
         runnables = new HashMap<>();
+        skinDatas = new HashMap<>();
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             for (List<MoveRunnable> runnable : runnables.values()) {
