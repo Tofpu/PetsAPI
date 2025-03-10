@@ -11,6 +11,8 @@ Fully packet based PetsAPI (1.18 - 1.21) using [PacketEvents](https://github.com
 
 # Example Usage
 ```java
+PetsAPI.init(this)
+
 Player player = ...
 Pet pet = new Pet(SkinData.ofPlayerName(player.getName()));
 pet.spawn(player);
