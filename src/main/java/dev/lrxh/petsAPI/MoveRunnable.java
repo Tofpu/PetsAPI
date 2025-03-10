@@ -6,6 +6,7 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class MoveRunnable implements Runnable {
     protected final Pet pet;
@@ -25,9 +26,36 @@ public class MoveRunnable implements Runnable {
 
         Location location = player.getLocation().clone();
 
+
+        if (pet.isLookAtPlayer()) {
+            Location petLocation = pet.getLocation();
+            if (petLocation == null) {
+                PetsAPI.kill(pet);
+                return;
+            }
+
+            Vector direction = location.toVector().subtract(petLocation.toVector());
+
+            float yaw = (float) Math.toDegrees(Math.atan2(direction.getZ(), direction.getX())) - 90;
+            float pitch = (float) -Math.toDegrees(Math.asin(direction.getY() / direction.length()));
+
+            pet.setYaw(yaw);
+            pet.setPitch(pitch);
+        }
+
+        location.add(pet.getOffset());
+
+        if (pet.getYaw() != Float.MAX_VALUE) {
+            location.setYaw(pet.getYaw());
+        }
+
+        if (pet.getPitch() != Float.MAX_VALUE) {
+            location.setPitch(pet.getPitch());
+        }
+
         WrapperPlayServerEntityTeleport teleport = new WrapperPlayServerEntityTeleport(
                 pet.getEntity().getEntityId(),
-                SpigotConversionUtil.fromBukkitLocation(location.add(pet.getOffset())),
+                SpigotConversionUtil.fromBukkitLocation(location),
                 true);
 
         for (Player online : Bukkit.getOnlinePlayers()) {

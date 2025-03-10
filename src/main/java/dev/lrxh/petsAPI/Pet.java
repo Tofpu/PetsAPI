@@ -18,12 +18,14 @@ import me.tofaa.entitylib.meta.Metadata;
 import me.tofaa.entitylib.meta.other.ArmorStandMeta;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -35,20 +37,31 @@ public class Pet {
     private final List<PacketWrapper> packets;
     private WrapperEntity armourStand;
     private Vector offset;
+    private Player player;
+    private float yaw;
+    private float pitch;
+    private boolean lookAtPlayer;
 
     public Pet(SkinData skinData) {
         this.skinData = skinData;
         this.offset = new Vector(1, 1, 1);
         this.packets = new ArrayList<>();
+        this.yaw = Float.MAX_VALUE;
+        this.pitch = Float.MAX_VALUE;
+        this.lookAtPlayer = false;
     }
 
     public Pet(EntitySkinData entitySkinData) {
         this.skinData = entitySkinData.getSkinData();
         this.offset = new Vector(1, 1, 1);
         this.packets = new ArrayList<>();
+        this.yaw = Float.MAX_VALUE;
+        this.pitch = Float.MAX_VALUE;
+        this.lookAtPlayer = false;
     }
 
     public void spawn(Player player) {
+        this.player = player;
         UUID uuid = UUID.randomUUID();
         int id = EntityLib.getPlatform().getEntityIdProvider().provide(uuid, EntityTypes.ARMOR_STAND);
 
@@ -119,6 +132,36 @@ public class Pet {
 
     public void setOffset(Vector offset) {
         this.offset = offset;
+    }
+
+    @Nullable
+    public Location getLocation() {
+        if (player == null) return null;
+        return player.getLocation().add(offset);
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
+    }
+
+    public boolean isLookAtPlayer() {
+        return lookAtPlayer;
+    }
+
+    public void setLookAtPlayer(boolean lookAtPlayer) {
+        this.lookAtPlayer = lookAtPlayer;
     }
 
     protected List<PacketWrapper> getPackets() {
