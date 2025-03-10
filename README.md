@@ -22,4 +22,9 @@ Player player = ...
 Pet pet = new Pet(EntitySkinData.COW);
 pet.setLookAtPlayer(true);
 pet.spawn(player);
+
+//Remove player pets
+for (Pet pet : PetsAPI.getPets(player)) {
+    pet.remove();
+}
 ``` 
