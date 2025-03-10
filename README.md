@@ -16,4 +16,9 @@ PetsAPI.init(this)
 Player player = ...
 Pet pet = new Pet(SkinData.ofPlayerName(player.getName()));
 pet.spawn(player);
+
+//Example Animal Head
+Player player = ...
+Pet pet = new Pet(EntitySkinData.COW);
+pet.spawn(player);
 ``` 
