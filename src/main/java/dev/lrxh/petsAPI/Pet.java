@@ -109,13 +109,13 @@ public class Pet {
             SkullMeta meta = (SkullMeta) head.getItemMeta();
             GameProfile profile = new GameProfile(UUID.randomUUID(), "");
             profile.getProperties().put("textures", new Property("textures", skinData.getValue()));
-            Field profileField = null;
+            Field profileField;
             try {
                 profileField = meta.getClass().getDeclaredField("profile");
                 profileField.setAccessible(true);
                 profileField.set(meta, profile);
             } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-                e.printStackTrace();
+                PetsAPI.instance.getLogger().severe(e.getMessage());
             }
             head.setItemMeta(meta);
             return head;
