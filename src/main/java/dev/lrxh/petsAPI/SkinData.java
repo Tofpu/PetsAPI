@@ -16,14 +16,6 @@ public class SkinData {
         this.signature = signature;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
     public static SkinData ofPlayerName(String name) {
         Player player = Bukkit.getPlayerExact(name);
         PlayerProfile profile;
@@ -36,5 +28,13 @@ public class SkinData {
 
         Optional<ProfileProperty> property = profile.getProperties().stream().filter(loopProperty -> loopProperty.getName().equals("textures")).findFirst();
         return property.map(signedProperty -> new SkinData(signedProperty.getValue(), signedProperty.getSignature())).orElse(null);
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getSignature() {
+        return signature;
     }
 }

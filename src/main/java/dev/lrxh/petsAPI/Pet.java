@@ -29,29 +29,13 @@ import java.util.UUID;
 public class Pet {
     private final SkinData skinData;
     private WrapperEntity armourStand;
-    private List<PacketWrapper> packets;
+    private final List<PacketWrapper> packets;
     private Vector offset;
 
     public Pet(SkinData skinData) {
         this.skinData = skinData;
         this.offset = new Vector(1, 1, 1);
         this.packets = new ArrayList<>();
-    }
-
-    public WrapperEntity getEntity(){
-        return armourStand;
-    }
-
-    public void setOffset(Vector offset) {
-        this.offset = offset;
-    }
-
-    public Vector getOffset() {
-        return offset;
-    }
-
-    protected List<PacketWrapper> getPackets() {
-        return packets;
     }
 
     public void spawn(Player player) {
@@ -71,6 +55,7 @@ public class Pet {
         armourStand.spawn(SpigotConversionUtil.fromBukkitLocation(player.getLocation()));
 
         List<Equipment> equipment = new ArrayList<>();
+
         equipment.add(new Equipment(EquipmentSlot.HELMET, SpigotConversionUtil.fromBukkitItemStack(getPlayerHead(skinData))));
 
         WrapperPlayServerEntityEquipment equip = new WrapperPlayServerEntityEquipment(armourStand.getEntityId(), equipment);
@@ -95,5 +80,21 @@ public class Pet {
         skullMeta.setPlayerProfile(playerProfile);
         head.setItemMeta(skullMeta);
         return head;
+    }
+
+    public WrapperEntity getEntity() {
+        return armourStand;
+    }
+
+    public Vector getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Vector offset) {
+        this.offset = offset;
+    }
+
+    protected List<PacketWrapper> getPackets() {
+        return packets;
     }
 }

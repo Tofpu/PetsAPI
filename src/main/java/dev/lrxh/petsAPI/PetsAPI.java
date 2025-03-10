@@ -91,4 +91,8 @@ public final class PetsAPI {
             runnables.get(uuid).removeIf(moveRunnable -> moveRunnable.pet.equals(pet));
         }
     }
+
+    public static List<Pet> getPets(Player player) {
+        return pets.get(player.getUniqueId());
+    }
 }
