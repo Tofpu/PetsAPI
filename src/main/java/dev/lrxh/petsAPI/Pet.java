@@ -10,6 +10,8 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.tofaa.entitylib.EntityLib;
 import me.tofaa.entitylib.meta.Metadata;
@@ -21,19 +23,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Pet {
     private final SkinData skinData;
-    private WrapperEntity armourStand;
     private final List<PacketWrapper> packets;
+    private WrapperEntity armourStand;
     private Vector offset;
 
     public Pet(SkinData skinData) {
         this.skinData = skinData;
+        this.offset = new Vector(1, 1, 1);
+        this.packets = new ArrayList<>();
+    }
+
+    public Pet(EntitySkinData entitySkinData) {
+        this.skinData = entitySkinData.getSkinData();
         this.offset = new Vector(1, 1, 1);
         this.packets = new ArrayList<>();
     }
@@ -69,17 +79,34 @@ public class Pet {
         PetsAPI.kill(this);
     }
 
-    public ItemStack getPlayerHead(SkinData skinData) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
-        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-        PlayerProfile playerProfile = Bukkit.createProfile(UUID.randomUUID());
-        playerProfile.setProperty(new ProfileProperty("textures",
-                skinData.getValue(),
-                skinData.getSignature()
-        ));
-        skullMeta.setPlayerProfile(playerProfile);
-        head.setItemMeta(skullMeta);
-        return head;
+    public ItemStack getPlayerHead(@NotNull SkinData skinData) {
+        if (PacketEvents.getAPI().getServerManager().getVersion().is(VersionComparison.NEWER_THAN, ServerVersion.V_1_14)) {
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
+            SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+            PlayerProfile playerProfile = Bukkit.createProfile(UUID.randomUUID());
+            playerProfile.setProperty(new ProfileProperty("textures",
+                    skinData.getValue(),
+                    skinData.getSignature()
+            ));
+            skullMeta.setPlayerProfile(playerProfile);
+            head.setItemMeta(skullMeta);
+            return head;
+        } else {
+            ItemStack head = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
+            SkullMeta meta = (SkullMeta) head.getItemMeta();
+            GameProfile profile = new GameProfile(UUID.randomUUID(), "");
+            profile.getProperties().put("textures", new Property("textures", skinData.getValue()));
+            Field profileField = null;
+            try {
+                profileField = meta.getClass().getDeclaredField("profile");
+                profileField.setAccessible(true);
+                profileField.set(meta, profile);
+            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+                e.printStackTrace();
+            }
+            head.setItemMeta(meta);
+            return head;
+        }
     }
 
     public WrapperEntity getEntity() {
