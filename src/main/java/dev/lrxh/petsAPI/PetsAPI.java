@@ -97,6 +97,6 @@ public final class PetsAPI {
     public static List<Pet> getPets(Player player) {
         if (!pets.containsKey(player.getUniqueId())) return new ArrayList<>();
 
-        return pets.get(player.getUniqueId());
+        return new ArrayList<>(pets.get(player.getUniqueId()));
     }
 }
