@@ -20,5 +20,6 @@ pet.spawn(player);
 //Example Animal Head
 Player player = ...
 Pet pet = new Pet(EntitySkinData.COW);
+pet.setLookAtPlayer(true);
 pet.spawn(player);
 ``` 
