@@ -51,8 +51,8 @@ public class Pet {
         this.lookAtPlayer = false;
     }
 
-    public Pet(EntitySkinData entitySkinData) {
-        this.skinData = entitySkinData.getSkinData();
+    public Pet(AnimalSkinData animalSkinData) {
+        this.skinData = animalSkinData.getSkinData();
         this.offset = new Vector(1, 1, 1);
         this.packets = new ArrayList<>();
         this.yaw = Float.MAX_VALUE;

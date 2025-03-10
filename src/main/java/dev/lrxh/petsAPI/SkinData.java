@@ -26,7 +26,7 @@ public class SkinData {
         Player player = Bukkit.getPlayerExact(name);
 
         if (player == null) {
-            return EntitySkinData.STEVE.getSkinData();
+            return AnimalSkinData.STEVE.getSkinData();
         }
 
         if (PacketEvents.getAPI().getServerManager().getVersion().is(VersionComparison.NEWER_THAN, ServerVersion.V_1_14)) {
@@ -42,7 +42,7 @@ public class SkinData {
             return gameProfile.getProperties().get("textures").stream()
                     .map(signedProperty -> new SkinData(signedProperty.getValue(), signedProperty.getSignature()))
                     .findFirst()
-                    .orElse(EntitySkinData.STEVE.getSkinData());
+                    .orElse(AnimalSkinData.STEVE.getSkinData());
         }
     }
 
