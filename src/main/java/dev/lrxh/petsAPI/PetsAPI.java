@@ -63,8 +63,8 @@ public final class PetsAPI {
     static void load(Player player) {
         for (List<Pet> pets : pets.values()) {
             for (Pet pet : pets) {
-                pet.armourStand.addViewer(player.getUniqueId());
-                for (PacketWrapper packet : pet.packets) {
+                pet.getEntity().addViewer(player.getUniqueId());
+                for (PacketWrapper packet : pet.getPackets()) {
                     PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
                 }
             }
@@ -73,10 +73,22 @@ public final class PetsAPI {
 
     static void kill(Player player) {
         for (Pet pet : pets.get(player.getUniqueId())) {
-            pet.armourStand.despawn();
+            pet.getEntity().despawn();
         }
 
         pets.remove(player.getUniqueId());
         runnables.remove(player.getUniqueId());
+    }
+
+    static void kill(Pet pet) {
+        pet.getEntity().despawn();
+
+        for (UUID uuid : new ArrayList<>(pets.keySet())) {
+            pets.get(uuid).remove(pet);
+        }
+
+        for (UUID uuid : new ArrayList<>(runnables.keySet())) {
+            runnables.get(uuid).removeIf(moveRunnable -> moveRunnable.pet.equals(pet));
+        }
     }
 }

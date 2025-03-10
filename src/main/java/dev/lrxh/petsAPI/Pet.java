@@ -11,7 +11,6 @@ import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import lombok.Setter;
 import me.tofaa.entitylib.EntityLib;
 import me.tofaa.entitylib.meta.Metadata;
 import me.tofaa.entitylib.meta.other.ArmorStandMeta;
@@ -29,15 +28,30 @@ import java.util.UUID;
 
 public class Pet {
     private final SkinData skinData;
-    protected WrapperEntity armourStand;
-    protected List<PacketWrapper> packets;
-    @Setter
-    protected Vector offset;
+    private WrapperEntity armourStand;
+    private List<PacketWrapper> packets;
+    private Vector offset;
 
     public Pet(SkinData skinData) {
         this.skinData = skinData;
         this.offset = new Vector(1, 1, 1);
         this.packets = new ArrayList<>();
+    }
+
+    public WrapperEntity getEntity(){
+        return armourStand;
+    }
+
+    public void setOffset(Vector offset) {
+        this.offset = offset;
+    }
+
+    public Vector getOffset() {
+        return offset;
+    }
+
+    protected List<PacketWrapper> getPackets() {
+        return packets;
     }
 
     public void spawn(Player player) {
@@ -64,6 +78,10 @@ public class Pet {
         packets.add(equip);
 
         PetsAPI.add(player, this);
+    }
+
+    public void remove() {
+        PetsAPI.kill(this);
     }
 
     public ItemStack getPlayerHead(SkinData skinData) {

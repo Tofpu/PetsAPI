@@ -3,28 +3,32 @@ package dev.lrxh.petsAPI;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-@AllArgsConstructor
 public class MoveRunnable implements Runnable {
+    protected final Pet pet;
     private final Player player;
-    private final Pet pet;
+
+    public MoveRunnable(Player player, Pet pet) {
+        this.pet = pet;
+        this.player = player;
+    }
 
     @Override
     public void run() {
         if (player == null) {
+            PetsAPI.kill(pet);
             return;
         }
 
         Location location = player.getLocation().clone();
 
         WrapperPlayServerEntityTeleport teleport = new WrapperPlayServerEntityTeleport(
-                pet.armourStand.getEntityId(),
-                SpigotConversionUtil.fromBukkitLocation(location.add(pet.offset)),
-                false);
+                pet.getEntity().getEntityId(),
+                SpigotConversionUtil.fromBukkitLocation(location.add(pet.getOffset())),
+                true);
 
         for (Player online : Bukkit.getOnlinePlayers()) {
             PacketEvents.getAPI().getPlayerManager().sendPacket(online, teleport);
