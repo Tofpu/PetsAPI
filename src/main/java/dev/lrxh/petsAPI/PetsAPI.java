@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -95,8 +96,8 @@ public final class PetsAPI {
     }
 
     public static List<Pet> getPets(Player player) {
-        if (!pets.containsKey(player.getUniqueId())) return new ArrayList<>();
+        if (!pets.containsKey(player.getUniqueId())) return Collections.emptyList();
 
-        return new ArrayList<>(pets.get(player.getUniqueId()));
+        return Collections.unmodifiableList(pets.get(player.getUniqueId()));
     }
 }
