@@ -26,7 +26,6 @@ public class MoveRunnable implements Runnable {
 
         Location location = player.getLocation().clone();
 
-
         if (pet.isLookAtPlayer()) {
             Location petLocation = pet.getLocation();
             if (petLocation == null) {
