@@ -75,7 +75,29 @@ public class Pet {
         }
 
         armourStand = new WrapperEntity(id, uuid, EntityTypes.ARMOR_STAND, armorStandMeta);
-        armourStand.spawn(SpigotConversionUtil.fromBukkitLocation(player.getLocation()));
+
+        Location location = player.getLocation().clone();
+        location.add(offset);
+
+        if (lookAtPlayer) {
+            Vector direction = location.subtract(offset).toVector().subtract(location.toVector());
+
+            float yaw = (float) Math.toDegrees(Math.atan2(direction.getZ(), direction.getX())) - 90;
+            float pitch = (float) -Math.toDegrees(Math.asin(direction.getY() / direction.length()));
+
+            setYaw(yaw);
+            setPitch(pitch);
+        }
+
+        if (yaw != Float.MAX_VALUE) {
+            location.setYaw(yaw);
+        }
+
+        if (pitch != Float.MAX_VALUE) {
+            location.setPitch(pitch);
+        }
+
+        armourStand.spawn(SpigotConversionUtil.fromBukkitLocation(location));
 
         List<Equipment> equipment = new ArrayList<>();
 
